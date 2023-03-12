@@ -10,7 +10,7 @@ env:
 
 jobs:
   precheck:
-    if: github.repository == 'jreleaser/helloworld-java-bin' && startsWith(github.event.head_commit.message, 'Releasing version') != true
+    if: github.repository == 'aalmiray/helloworld' && startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
@@ -72,6 +72,7 @@ jobs:
       - name: Assemble
         uses: jreleaser/release-action@v2
         with:
+          version: early-access
           arguments: assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
@@ -80,11 +81,12 @@ jobs:
       - name: Release
         uses: jreleaser/release-action@v2
         with:
+          version: early-access
           arguments: full-release
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v3
